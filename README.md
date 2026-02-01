@@ -62,6 +62,15 @@ Aplicativo desenvolvido com **Expo** e **React Native** para controle de finanç
 
 2. **Instale as dependências**:  
    Bash  
+
+## **▶️ Como rodar o projeto**
+
+1. **Clone este repositório**:  
+   Bash  
+   git clone <https://github.com/seuusuario/finance-app.git>
+
+2. **Instale as dependências**:  
+   Bash  
    npm install
 
 3. **Inicie o projeto**:  

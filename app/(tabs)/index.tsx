@@ -1,98 +1,174 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { Button } from '@/components/Button';
+import { TransactionsModal } from '@/components/TransactionsModal';
+import { globalStyles } from '@/styles/global';
+import * as SecureStore from 'expo-secure-store';
+import React, { useEffect, useState } from 'react';
+import { Image, ScrollView, StatusBar, Text, TextInput, View } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import TransactionListItem from '../../components/TransactionListItem';
+import { useTransactions } from '../../hooks/useTransactions';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
 
-export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
+function Index() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  // const name = SecureStore.getItem('fin-app-id');
+  const { formattedBalance, addTransaction, getLastTransactions } = useTransactions();
+  const [identity, setIdentity] = useState<string | null>(null);
+  const [nameInput, setNameInput] = useState('');
+
+  const handleAddTransaction = (data: {
+    description: string;
+    amount: number;
+    referenceDate: Date;
+  }) => {
+    addTransaction(data);
+    alert("Transação salva com sucesso!");
+  };
+
+  useEffect(() => {
+    const loadIdentity = async () => {
+      const value = await SecureStore.getItemAsync('fin-app-id');
+      setIdentity(value);
+    };
+    loadIdentity();
+  }, []);
+
+  if (!identity) {
+    return (
+      <SafeAreaProvider>
+        <SafeAreaView style={[{ flex: 1, backgroundColor: '#2C5F30' }]}>
+          <StatusBar barStyle={"default"} />
+          <View style={[globalStyles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+
+            <Image
+              source={require("@/assets/images/logo.png")}
+              style={{ width: 150, height: 150, marginBottom: 20 }}
             />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+
+            <Text style={globalStyles.sectionTitle}>Indentifique-se para continuar</Text>
+            <TextInput
+              style={{
+                marginVertical: 20,
+                padding: 10,
+                borderWidth: 1,
+                borderColor: '#d0d3d0ec',
+                borderRadius: 5,
+                width: '100%',
+                backgroundColor: '#fff',
+                color: '#000',
+                fontSize: 16,
+              }}
+              placeholder="Digite seu nome"
+              value={nameInput}
+              onChangeText={async (text) => {
+                await SecureStore.setItemAsync('fin-app-id-temp', text);
+                setNameInput(text);
+              }} />
+            <Button
+              title='Entrar'
+              onPress={async () => {
+                await SecureStore.setItemAsync('fin-app-id', nameInput);
+                setIdentity(nameInput);
+              }}
+            />
+          </View>
+        </SafeAreaView>
+      </SafeAreaProvider>
+    );
+  }
+
+  return (
+    <SafeAreaProvider>
+      <SafeAreaView style={[{ flex: 1, backgroundColor: '#2C5F30' }]}>
+        <StatusBar barStyle={"default"} />
+        <View style={globalStyles.container}>
+          <Image source={require("@/assets/images/finance-logo.png")} style={[globalStyles.logo, { marginTop: 16 }]} />
+          <Text style={globalStyles.greeting}>
+            Olá, {identity || 'Visitante'}!
+          </Text>
+          <Text style={globalStyles.balanceLabel}>
+            Saldo Atual
+          </Text>
+          <Text style={globalStyles.balance}>
+            {formattedBalance}
+          </Text>
+
+
+          <View style={globalStyles.buttonsContainer}>
+            <Button title='Adicionar Receita' onPress={() => setIsModalOpen(true)} />
+          </View>
+
+          <TransactionsModal
+            Visible={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            onSave={handleAddTransaction} />
+
+          <Text style={globalStyles.sectionTitle}>
+            Transações Recentes
+          </Text>
+
+          {/*
+        <Text>FlatList 2</Text>
+        <FlatList
+          data={transactions}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => (
+            <View style={globalStyles.transactionItem}>
+              <Text style={globalStyles.transactionText}>
+                {item.description}
+              </Text>
+              <Text style={[globalStyles.transactionAmount, item.amount >= 0 ? globalStyles.income : globalStyles.expense]}>
+                R$ {item.amount.toFixed(2)}
+              </Text>
+            </View>
+          )}
+        /> */}
+          {/* {transactions.map(transaction => (
+          <View key={transaction.id} style={globalStyles.transactionItem}>
+            <Text style={globalStyles.transactionText}>
+              {transaction.description}
+            </Text>
+            <Text style={[globalStyles.transactionAmount, transaction.amount >= 0 ? globalStyles.income : globalStyles.expense]}>
+              R$ {transaction.amount.toFixed(2)}
+            </Text>
+          </View>
+        ))} */}
+
+          {/* <View style={
+          {
+            marginVertical: 2,
+            position: 'fixed',
+            bottom: 20,
+            width: '100%',
+            height: 40,
+            backgroundColor: '#fff',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: 5,
+            borderColor: '#d0d3d0ec',
+            borderWidth: 1,
+          }
+        }>
+          <Link href={"/transactions"} style={{ fontSize: 16, color: '#1b66f1', fontWeight: 'bold', textDecorationLine: "underline", }}>
+            Ver transação
+          </Link>
+  
+          <Link href={{ pathname: "/transaction/[id]", params: { id: 1 } }} style={{ fontSize: 16, color: '#1b66f1', fontWeight: 'bold', textDecorationLine: "underline", }}>
+            Ver transação
+          </Link>
+        </View> */}
+
+          <ScrollView>
+            {getLastTransactions?.().map(transaction => (
+              <TransactionListItem key={transaction.id} transaction={transaction} />
+            ))}
+          </ScrollView>
+
+        </View>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
+export default Index;

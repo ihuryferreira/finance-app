@@ -1,0 +1,149 @@
+{
+  "expo": {
+    "name": "Personal Finance",
+    "slug": "finance-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/finance-icon.png",
+    "scheme": "financeapp",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#d9d9d9",
+        "foregroundImage": "./assets/images/finance-icon-foreground.png",
+        "backgroundImage": "./assets/images/finance-icon-background.png",
+        "monochromeImage": "./assets/images/finance-icon-monochrome.png"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "package": "com.ihuryferreira.financeapp"
+    },
+    "web": {
+      "output": "static",
+      "favicon": "./assets/images/finance-logo.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/finance-splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#d9d9d9",
+          "dark": {
+            "backgroundColor": "#d2d1d9"
+          }
+        }
+      ],
+      "expo-secure-store",
+      [
+        "expo-font",
+        {
+          "android": {
+            "fonts": [
+              {
+                "fontFamily": "Poppins",
+                "fontDefinitions": [
+                  {
+                    "path": "./assets/fonts/Poppins-Regular.ttf",
+                    "weight": "400",
+                    "style": "normal"
+                  },
+                  {
+                    "path": "./assets/fonts/Poppins-Bold.ttf",
+                    "weight": "700",
+                    "style": "normal"
+                  },
+                  {
+                    "path": "./assets/fonts/Poppins.otf",
+                    "weight": "400",
+                    "style": "normal"
+                  }
+                ]
+              },
+              {
+                "fontFamily": "NunitoSans",
+                "fontDefinitions": [
+                  {
+                    "path": "./assets/fonts/NunitoSans-Regular.ttf",
+                    "weight": "400",
+                    "style": "normal"
+                  }
+                ]
+              },
+              {
+                "fontFamily": "SpaceMono-Regular",
+                "fontDefinitions": [
+                  {
+                    "path": "./assets/fonts/SpaceMono-Regular.ttf",
+                    "weight": "400",
+                    "style": "normal"
+                  }
+                ]
+              }
+            ]
+          },
+          "ios": {
+            "fonts": [
+              {
+                "fontFamily": "Poppins",
+                "fontDefinitions": [
+                  {
+                    "path": "./assets/fonts/Poppins-Regular.ttf",
+                    "weight": "400",
+                    "style": "normal"
+                  },
+                  {
+                    "path": "./assets/fonts/Poppins-Bold.ttf",
+                    "weight": "700",
+                    "style": "normal"
+                  },
+                  {
+                    "path": "./assets/fonts/Poppins.otf",
+                    "weight": "400",
+                    "style": "normal"
+                  }
+                ]
+              },
+              {
+                "fontFamily": "NunitoSans",
+                "fontDefinitions": [
+                  {
+                    "path": "./assets/fonts/NunitoSans-Regular.ttf",
+                    "weight": "400",
+                    "style": "normal"
+                  }
+                ]
+              },
+              {
+                "fontFamily": "SpaceMono",
+                "fontDefinitions": [
+                  {
+                    "path": "./assets/fonts/SpaceMono-Regular.ttf",
+                    "weight": "400",
+                    "style": "normal"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "40db6d46-1296-4578-8f55-44c7a3cbbc82"
+      }
+    }
+  }
+}
